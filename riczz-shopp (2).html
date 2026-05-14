@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riczz Shopp — AI Caption Generator #1 Indonesia</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0; --bg2: #FFFFFF; --bg3: #EDEAE3;
+  --text: #1A1814; --text2: #5C5A55; --text3: #9B9890;
+  --accent: #FF4D1C; --accent2: #FF7A50; --accent-bg: #FFF0EB;
+  --green: #00A878; --green-bg: #E6F7F3;
+  --purple: #6C5CE7; --purple-bg: #F0EEFF;
+  --gold: #F59E0B; --gold-bg: #FFFBEB;
+  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.14);
+  --shadow: 0 2px 16px rgba(0,0,0,0.06); --shadow-lg: 0 8px 40px rgba(0,0,0,0.1);
+  --radius: 16px; --radius-sm: 10px; --radius-xs: 8px;
+}
+[data-theme="dark"] {
+  --bg: #111010; --bg2: #1C1B1A; --bg3: #252422;
+  --text: #F0EDE6; --text2: #A8A49C; --text3: #6B6760;
+  --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+  --shadow: 0 2px 16px rgba(0,0,0,0.3); --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  --accent-bg: rgba(255,77,28,0.12); --green-bg: rgba(0,168,120,0.12);
+  --purple-bg: rgba(108,92,231,0.12); --gold-bg: rgba(245,158,11,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;transition:background 0.3s,color 0.3s;overflow-x:hidden;}
+
+/* ===== OVERLAY SYSTEM ===== */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.overlay.active{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:24px;width:100%;max-width:460px;padding:40px;position:relative;transform:translateY(20px) scale(0.97);transition:transform 0.3s;max-height:90vh;overflow-y:auto;}
+.overlay.active .modal{transform:translateY(0) scale(1);}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--bg3);border:none;color:var(--text2);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.modal-close:hover{color:var(--text);}
+.modal-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent);margin-bottom:6px;}
+.modal-logo span{color:var(--text);}
+.modal h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:6px;}
+.modal .subtitle{color:var(--text2);font-size:14px;margin-bottom:28px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+.form-group input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-xs);padding:12px 14px;font-size:15px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border 0.2s;}
+.form-group input:focus{border-color:var(--accent);}
+.btn-full{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-xs);padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Syne',sans-serif;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-full:hover{background:#E03800;transform:translateY(-1px);}
+.btn-full:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+.modal-switch{text-align:center;margin-top:20px;font-size:14px;color:var(--text2);}
+.modal-switch a{color:var(--accent);font-weight:600;cursor:pointer;text-decoration:none;}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border2);}
+.divider span{font-size:13px;color:var(--text3);}
+
+/* ===== NAVBAR ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(17,16,16,0.9);border-bottom:1px solid var(--border);backdrop-filter:blur(16px);}
+[data-theme="light"] nav{background:rgba(247,245,240,0.9);}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent);text-decoration:none;letter-spacing:-0.5px;}
+.logo span{color:var(--text);}
+.nav-links{display:flex;align-items:center;gap:8px;}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:14px;font-weight:500;padding:8px 14px;border-radius:var(--radius-xs);transition:all 0.2s;}
+.nav-links a:hover{color:var(--text);background:var(--bg3);}
+.nav-cta{background:var(--accent) !important;color:#fff !important;padding:9px 20px;border-radius:var(--radius-xs) !important;font-size:14px;font-weight:600 !important;transition:all 0.2s;}
+.nav-cta:hover{background:#E03800 !important;transform:translateY(-1px);}
+.theme-btn{background:none;border:1px solid var(--border2);color:var(--text2);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.theme-btn:hover{background:var(--bg3);}
+.hamburger{display:none;background:none;border:none;color:var(--text);cursor:pointer;font-size:22px;padding:4px;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+
+/* User nav state */
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;cursor:pointer;flex-shrink:0;border:2px solid transparent;transition:all 0.2s;}
+.nav-avatar:hover{transform:scale(1.05);}
+.nav-avatar.premium{border-color:var(--gold);}
+.badge-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:0.5px;}
+.badge-premium{background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#000;}
+.badge-free{background:var(--bg3);color:var(--text3);border:1px solid var(--border2);}
+
+/* ===== HERO ===== */
+.hero{padding:140px 24px 80px;max-width:1200px;margin:0 auto;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-bg);color:var(--accent);border:1px solid rgba(255,77,28,0.2);border-radius:100px;padding:6px 16px;font-size:13px;font-weight:600;margin-bottom:28px;animation:fadeUp 0.6s ease both;}
+.hero-badge .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
+h1.hero-title{font-family:'Syne',sans-serif;font-size:clamp(42px,7vw,80px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:24px;animation:fadeUp 0.6s 0.1s ease both;}
+.hero-title .highlight{color:var(--accent);}
+.hero-subtitle{font-size:clamp(17px,2.5vw,21px);color:var(--text2);max-width:580px;margin:0 auto 40px;font-weight:400;animation:fadeUp 0.6s 0.2s ease both;}
+.hero-btns{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;animation:fadeUp 0.6s 0.3s ease both;}
+.btn-primary{background:var(--accent);color:#fff;padding:14px 32px;border-radius:var(--radius-xs);font-size:16px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:#E03800;transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,77,28,0.3);}
+.btn-secondary{background:var(--bg2);color:var(--text);padding:14px 32px;border-radius:var(--radius-xs);font-size:16px;font-weight:600;text-decoration:none;border:1px solid var(--border2);cursor:pointer;transition:all 0.2s;}
+.btn-secondary:hover{background:var(--bg3);transform:translateY(-2px);}
+.hero-stats{display:flex;align-items:center;justify-content:center;gap:40px;margin-top:60px;flex-wrap:wrap;animation:fadeUp 0.6s 0.4s ease both;}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;}
+.stat-label{font-size:13px;color:var(--text3);font-weight:500;}
+.stat-divider{width:1px;height:40px;background:var(--border2);}
+
+/* ===== PLATFORMS ===== */
+.platforms{padding:40px 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2);}
+.platforms-inner{max-width:900px;margin:0 auto;text-align:center;}
+.platforms-label{font-size:13px;color:var(--text3);font-weight:500;margin-bottom:24px;text-transform:uppercase;letter-spacing:1px;}
+.platform-badges{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;}
+.platform-badge{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-xs);padding:12px 20px;font-weight:600;font-size:15px;}
+.platform-badge .icon{font-size:22px;}
+
+/* ===== FEATURES ===== */
+.section{padding:100px 24px;max-width:1200px;margin:0 auto;}
+.section-label{font-size:13px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:16px;}
+.section-sub{font-size:18px;color:var(--text2);max-width:560px;font-weight:400;}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:60px;}
+.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:all 0.3s;}
+.feature-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.feature-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;}
+.feature-card h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:10px;}
+.feature-card p{color:var(--text2);font-size:15px;line-height:1.6;}
+
+/* ===== GENERATOR ===== */
+#generator{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.generator-inner{max-width:1100px;margin:0 auto;padding:100px 24px;}
+.gen-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+.form-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:32px;}
+.form-group-gen{margin-bottom:20px;}
+.form-group-gen label{display:block;font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.form-group-gen input,.form-group-gen select,.form-group-gen textarea{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-xs);padding:11px 14px;font-size:15px;color:var(--text);font-family:'DM Sans',sans-serif;transition:border 0.2s;outline:none;}
+.form-group-gen input:focus,.form-group-gen select:focus,.form-group-gen textarea:focus{border-color:var(--accent);}
+.form-group-gen textarea{resize:vertical;min-height:80px;}
+.form-group-gen select option{background:var(--bg2);color:var(--text);}
+.style-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;}
+.style-chip{border:1px solid var(--border2);background:var(--bg2);border-radius:var(--radius-xs);padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.2s;color:var(--text2);position:relative;}
+.style-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.style-chip:hover:not(.active):not(.locked){border-color:var(--border2);background:var(--bg3);color:var(--text);}
+.style-chip.locked{opacity:0.5;cursor:not-allowed;}
+.style-chip .lock-icon{position:absolute;top:4px;right:6px;font-size:10px;}
+.platform-select{display:flex;gap:8px;flex-wrap:wrap;}
+.platform-chip{border:1px solid var(--border2);background:var(--bg2);border-radius:var(--radius-xs);padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.platform-chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-bg);}
+.generate-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-xs);padding:15px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Syne',sans-serif;}
+.generate-btn:hover:not(:disabled){background:#E03800;transform:translateY(-2px);}
+.generate-btn:disabled{opacity:0.7;cursor:not-allowed;}
+
+/* Limit Bar */
+.limit-bar{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-xs);padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.limit-text{font-size:13px;color:var(--text2);font-weight:500;}
+.limit-count{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+.limit-count.danger{color:var(--accent);}
+.limit-count.ok{color:var(--green);}
+.limit-count.unlimited{color:var(--gold);}
+
+/* Result */
+.result-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:32px;min-height:300px;display:flex;flex-direction:column;}
+.result-placeholder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);gap:16px;text-align:center;}
+.result-placeholder .icon-big{font-size:48px;opacity:0.4;}
+.result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.result-label{font-size:13px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;}
+.result-actions{display:flex;gap:8px;}
+.action-btn{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-xs);padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all 0.2s;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;}
+.action-btn:hover{background:var(--bg3);color:var(--text);}
+.action-btn.copied{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+.result-text{flex:1;font-size:15px;line-height:1.8;color:var(--text);white-space:pre-wrap;word-break:break-word;}
+.loading-anim{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:20px;}
+.loading-dots{display:flex;gap:6px;}
+.loading-dot{width:10px;height:10px;background:var(--accent);border-radius:50%;animation:bounce 1.2s infinite;}
+.loading-dot:nth-child(2){animation-delay:0.2s;}
+.loading-dot:nth-child(3){animation-delay:0.4s;}
+.loading-text{color:var(--text2);font-size:15px;font-weight:500;}
+
+/* Upgrade CTA in generator */
+.upgrade-cta{background:linear-gradient(135deg,var(--accent-bg),var(--gold-bg));border:1px solid rgba(255,77,28,0.2);border-radius:var(--radius-sm);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;}
+.upgrade-cta-text{font-size:13px;color:var(--text2);}
+.upgrade-cta-text strong{color:var(--text);display:block;margin-bottom:2px;}
+.upgrade-cta-btn{background:var(--accent);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+.upgrade-cta-btn:hover{background:#E03800;}
+
+/* ===== PRICING ===== */
+.pricing-inner{max-width:1100px;margin:0 auto;padding:100px 24px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:60px;}
+.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:36px;position:relative;transition:all 0.3s;}
+.price-card.featured{border-color:var(--accent);border-width:2px;}
+.price-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:4px 16px;border-radius:100px;font-size:12px;font-weight:700;white-space:nowrap;}
+.price-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+.price-amount{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;line-height:1;margin-bottom:4px;}
+.price-amount span{font-size:16px;font-weight:500;color:var(--text2);}
+.price-desc{color:var(--text3);font-size:14px;margin-bottom:28px;}
+.price-features{list-style:none;margin-bottom:32px;}
+.price-features li{padding:8px 0;font-size:14px;color:var(--text2);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.price-features li:last-child{border-bottom:none;}
+.price-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;}
+.price-btn{width:100%;padding:13px;border-radius:var(--radius-xs);font-size:15px;font-weight:700;cursor:pointer;border:none;font-family:'Syne',sans-serif;transition:all 0.2s;}
+.price-btn.outline{background:transparent;border:2px solid var(--border2);color:var(--text);}
+.price-btn.outline:hover{border-color:var(--accent);color:var(--accent);}
+.price-btn.filled{background:var(--accent);color:#fff;}
+.price-btn.filled:hover{background:#E03800;transform:translateY(-1px);}
+
+/* ===== TESTIMONIALS ===== */
+.testimonials{background:var(--bg);}
+.testimonials-inner{max-width:1200px;margin:0 auto;padding:100px 24px;}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:60px;}
+.testi-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;}
+.testi-stars{color:#F59E0B;margin-bottom:16px;font-size:18px;}
+.testi-text{font-size:15px;line-height:1.7;color:var(--text2);margin-bottom:20px;}
+.testi-author{display:flex;align-items:center;gap:12px;}
+.testi-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;}
+.testi-name{font-weight:600;font-size:14px;}
+.testi-platform{font-size:12px;color:var(--text3);}
+
+/* ===== FAQ ===== */
+.faq-inner{max-width:800px;margin:0 auto;padding:100px 24px;}
+.faq-list{margin-top:60px;display:flex;flex-direction:column;gap:12px;}
+.faq-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.faq-q{width:100%;background:none;border:none;padding:20px 24px;text-align:left;font-size:15px;font-weight:600;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:'DM Sans',sans-serif;}
+.faq-q .arrow{transition:transform 0.3s;flex-shrink:0;font-size:18px;color:var(--text3);}
+.faq-item.open .faq-q .arrow{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.35s ease;}
+.faq-item.open .faq-a{max-height:300px;}
+.faq-a-inner{padding:0 24px 20px;color:var(--text2);font-size:15px;line-height:1.7;}
+
+/* ===== CTA FINAL ===== */
+.cta-final{background:var(--accent);padding:100px 24px;text-align:center;}
+.cta-final h2{font-family:'Syne',sans-serif;font-size:clamp(36px,6vw,64px);font-weight:800;color:#fff;letter-spacing:-2px;margin-bottom:20px;}
+.cta-final p{color:rgba(255,255,255,0.8);font-size:18px;margin-bottom:40px;}
+.btn-white{background:#fff;color:var(--accent);padding:14px 36px;border-radius:var(--radius-xs);font-size:16px;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:all 0.2s;display:inline-block;font-family:'Syne',sans-serif;}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+
+/* ===== FOOTER ===== */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:60px 24px 40px;}
+.footer-inner{max-width:1200px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px;}
+.footer-brand .logo{display:block;margin-bottom:12px;font-size:20px;}
+.footer-brand p{color:var(--text3);font-size:14px;max-width:260px;line-height:1.6;}
+.footer-col h4{font-weight:700;font-size:14px;margin-bottom:16px;}
+.footer-col a{display:block;color:var(--text3);text-decoration:none;font-size:14px;margin-bottom:8px;transition:color 0.2s;}
+.footer-col a:hover{color:var(--text);}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:24px;color:var(--text3);font-size:13px;flex-wrap:wrap;gap:12px;}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:var(--bg);padding:12px 20px;border-radius:var(--radius-xs);font-size:14px;font-weight:600;transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:9999;max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{background:#00A878;color:#fff;}
+.toast.error{background:#ef4444;color:#fff;}
+.toast.info{background:var(--purple);color:#fff;}
+
+/* ===== STATS TICKER ===== */
+.stats-bar{background:var(--bg3);border-top:1px solid var(--border);padding:14px 24px;overflow:hidden;}
+.stats-ticker{display:flex;gap:48px;white-space:nowrap;animation:ticker 20s linear infinite;}
+.ticker-item{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text2);}
+.ticker-dot{color:var(--green);font-size:10px;}
+
+/* ===== DASHBOARD ===== */
+#dashboardModal .modal{max-width:560px;}
+.dash-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;}
+.dash-avatar{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#fff;flex-shrink:0;border:3px solid transparent;}
+.dash-avatar.premium{border-color:var(--gold);}
+.dash-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.dash-email{font-size:14px;color:var(--text2);}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.dash-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;}
+.dash-card-label{font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.dash-card-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+.dash-card-value.gold{color:var(--gold);}
+.dash-card-value.green{color:var(--green);}
+.dash-card-value.accent{color:var(--accent);}
+.dash-divider{height:1px;background:var(--border);margin:20px 0;}
+.dash-btn-row{display:flex;gap:10px;}
+.btn-danger{background:transparent;border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:var(--radius-xs);padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.btn-danger:hover{background:rgba(239,68,68,0.1);}
+.btn-upgrade-dash{background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#000;border:none;border-radius:var(--radius-xs);padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;flex:1;}
+.btn-upgrade-dash:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(245,158,11,0.3);}
+
+/* ===== PAYMENT MODAL (Midtrans Real) ===== */
+#paymentModal .modal{max-width:520px;}
+.pay-plan{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+.pay-plan-name{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;}
+.pay-plan-price{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;color:var(--accent);}
+.pay-sandbox-badge{display:inline-flex;align-items:center;gap:6px;background:var(--purple-bg);color:var(--purple);border:1px solid rgba(108,92,231,0.3);border-radius:100px;padding:4px 12px;font-size:12px;font-weight:700;margin-bottom:16px;}
+.pay-note{font-size:13px;color:var(--text3);text-align:center;margin-top:12px;}
+.pay-security-info{background:var(--green-bg);border:1px solid rgba(0,168,120,0.2);border-radius:var(--radius-xs);padding:12px 16px;margin-top:14px;font-size:13px;color:var(--green);display:flex;align-items:center;gap:8px;}
+.pay-status-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:20px;margin-top:16px;text-align:center;}
+.pay-status-icon{font-size:48px;margin-bottom:12px;}
+.pay-status-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;}
+.pay-status-desc{font-size:14px;color:var(--text2);}
+.pay-status-pending{color:var(--gold);}
+.pay-status-success{color:var(--green);}
+.pay-status-failed{color:#ef4444;}
+.pay-txn-info{background:var(--bg3);border-radius:var(--radius-xs);padding:12px;margin-top:12px;font-size:12px;color:var(--text3);font-family:monospace;word-break:break-all;}
+
+/* Config Banner */
+.config-banner{background:linear-gradient(135deg,rgba(108,92,231,0.15),rgba(255,77,28,0.1));border:1px solid rgba(108,92,231,0.3);border-radius:var(--radius-sm);padding:16px 20px;margin-bottom:20px;}
+.config-banner h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.config-banner p{font-size:13px;color:var(--text2);line-height:1.6;}
+.config-banner code{background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--accent);}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-10px);}}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.fade-in{opacity:0;transform:translateY(20px);transition:all 0.6s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .nav-links{display:none;position:absolute;top:64px;left:0;right:0;background:var(--bg2);border-bottom:1px solid var(--border);flex-direction:column;padding:16px;gap:4px;box-shadow:var(--shadow);}
+  .nav-links.open{display:flex;}
+  .nav-links .nav-cta{text-align:center;}
+  .hamburger{display:block;}
+  .gen-grid{grid-template-columns:1fr;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .hero-stats .stat-divider{display:none;}
+  .hero-stats{gap:24px;}
+  .dash-grid{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  .footer-top{grid-template-columns:1fr;}
+  .modal{padding:28px 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== NAVBAR ========== -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">Riczz<span>Shopp</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#fitur">Fitur</a>
+      <a href="#generator">Generator</a>
+      <a href="#harga">Harga</a>
+      <a href="#faq">FAQ</a>
+      <span id="navAuthArea"></span>
+    </div>
+    <div class="nav-right">
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode">☀️</button>
+      <div id="navUserArea"></div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<!-- LIVE STATS TICKER -->
+<div class="stats-bar" style="margin-top:64px;">
+  <div class="stats-ticker">
+    <span class="ticker-item"><span class="ticker-dot">●</span> 2.847 caption dibuat hari ini</span>
+    <span class="ticker-item"><span class="ticker-dot">●</span> TikTok Shop · Shopee · Instagram</span>
+    <span class="ticker-item"><span class="ticker-dot">●</span> 98% seller puas dengan hasilnya</span>
+    <span class="ticker-item"><span class="ticker-dot">●</span> Generate dalam &lt;5 detik</span>
+    <span class="ticker-item"><span class="ticker-dot">●</span> 2.847 caption dibuat hari ini</span>
+    <span class="ticker-item"><span class="ticker-dot">●</span> TikTok Shop · Shopee · Instagram</span>
+    <span class="ticker-item"><span class="ticker-dot">●</span> 98% seller puas dengan hasilnya</span>
+    <span class="ticker-item"><span class="ticker-dot">●</span> Generate dalam &lt;5 detik</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span class="dot"></span> AI Caption Generator #1 di Indonesia</div>
+  <h1 class="hero-title">Bikin Caption Jualan<br><span class="highlight">Viral</span> dalam Sekejap.</h1>
+  <p class="hero-subtitle">Bantu seller TikTok Shop, Shopee & Instagram buat caption jualan menarik secara otomatis. Tanpa ribet, tanpa bingung.</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="handleHeroCTA()">✨ Mulai Gratis Sekarang</button>
+    <a href="#fitur" class="btn-secondary">Lihat Fitur →</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">50K+</div><div class="stat-label">Caption Dibuat</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num">12K+</div><div class="stat-label">Seller Aktif</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num">3×</div><div class="stat-label">Lebih Banyak Closing</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num">4.9⭐</div><div class="stat-label">Rating Pengguna</div></div>
+  </div>
+</section>
+
+<!-- PLATFORMS -->
+<div class="platforms">
+  <div class="platforms-inner">
+    <p class="platforms-label">Mendukung Platform</p>
+    <div class="platform-badges">
+      <div class="platform-badge"><span class="icon">🎵</span> TikTok Shop</div>
+      <div class="platform-badge"><span class="icon">🛍️</span> Shopee</div>
+      <div class="platform-badge"><span class="icon">📸</span> Instagram</div>
+      <div class="platform-badge"><span class="icon">🛒</span> Tokopedia</div>
+      <div class="platform-badge"><span class="icon">🏪</span> Lazada</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="fitur">
+  <div class="fade-in">
+    <div class="section-label">Fitur Unggulan</div>
+    <h2 class="section-title">Semua yang Seller<br>Butuhkan</h2>
+    <p class="section-sub">Dari satu platform, buat caption untuk semua toko onlinemu dengan mudah.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card fade-in">
+      <div class="feature-icon" style="background:var(--accent-bg);">🤖</div>
+      <h3>AI Canggih</h3>
+      <p>Teknologi AI terbaru yang paham konteks jualan Indonesia. Caption langsung nyambung sama target pasar kamu.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon" style="background:var(--green-bg);">⚡</div>
+      <h3>Generate Instan</h3>
+      <p>Caption siap dalam hitungan detik. Tidak perlu lagi habiskan waktu berjam-jam mikirin kata-kata.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon" style="background:var(--purple-bg);">🎯</div>
+      <h3>7 Gaya Caption</h3>
+      <p>Soft Selling, Hard Selling, FOMO, Gen Z, Affiliate, Elegan, dan Lucu. Sesuaikan dengan karakter brandmu.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon" style="background:var(--gold-bg);">#️⃣</div>
+      <h3>Hashtag Otomatis</h3>
+      <p>Hashtag relevan dan trending otomatis disertakan di setiap caption untuk jangkauan lebih luas.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon" style="background:var(--accent-bg);">🛍️</div>
+      <h3>Multi Platform</h3>
+      <p>Khusus dioptimalkan untuk TikTok Shop, Shopee, Instagram, Tokopedia, dan Lazada.</p>
+    </div>
+    <div class="feature-card fade-in">
+      <div class="feature-icon" style="background:var(--green-bg);">🔒</div>
+      <h3>Bayar Aman</h3>
+      <p>Powered by Midtrans — QRIS, GoPay, DANA, Bank Transfer. Verifikasi server-side, 100% aman.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GENERATOR -->
+<section id="generator">
+  <div class="generator-inner">
+    <div class="fade-in" style="margin-bottom:40px;">
+      <div class="section-label">Generator</div>
+      <h2 class="section-title">Buat Caption Sekarang</h2>
+    </div>
+    <div class="gen-grid">
+      <div class="form-card">
+        <div id="limitBarContainer"></div>
+        <div id="upgradeCTAContainer"></div>
+        <div class="form-group-gen">
+          <label>Platform Jualan</label>
+          <div class="platform-select" id="platformSelect">
+            <div class="platform-chip active" data-val="TikTok Shop">🎵 TikTok Shop</div>
+            <div class="platform-chip" data-val="Shopee">🛍️ Shopee</div>
+            <div class="platform-chip" data-val="Instagram">📸 Instagram</div>
+            <div class="platform-chip" data-val="Tokopedia">🛒 Tokopedia</div>
+            <div class="platform-chip" data-val="Lazada">🏪 Lazada</div>
+          </div>
+        </div>
+        <div class="form-group-gen">
+          <label>Nama Produk *</label>
+          <input type="text" id="produkName" placeholder="Cth: Serum Vitamin C, Baju Batik, Tas Kulit..." />
+        </div>
+        <div class="form-group-gen">
+          <label>Target Pasar</label>
+          <select id="targetMarket">
+            <option>Semua Kalangan</option>
+            <option>Remaja (15-22 tahun)</option>
+            <option>Dewasa Muda (23-30 tahun)</option>
+            <option>Ibu Rumah Tangga</option>
+            <option>Profesional / Kantoran</option>
+            <option>Pecinta Kecantikan</option>
+          </select>
+        </div>
+        <div class="form-group-gen">
+          <label>Promo / Keunggulan Produk</label>
+          <textarea id="promo" placeholder="Cth: Diskon 50%, gratis ongkir, beli 2 gratis 1, sudah BPOM, original..."></textarea>
+        </div>
+        <div class="form-group-gen">
+          <label>Gaya Caption</label>
+          <div class="style-grid" id="styleGrid">
+            <div class="style-chip active" data-style="Soft Selling">😊 Soft Selling</div>
+            <div class="style-chip" data-style="Hard Selling">🔥 Hard Selling</div>
+            <div class="style-chip" data-style="FOMO">⏰ FOMO</div>
+            <div class="style-chip premium-only" data-style="Gen Z">✌️ Gen Z</div>
+            <div class="style-chip premium-only" data-style="Affiliate">💸 Affiliate</div>
+            <div class="style-chip premium-only" data-style="Elegan">👑 Elegan</div>
+            <div class="style-chip premium-only" data-style="Lucu">😂 Lucu</div>
+          </div>
+        </div>
+        <button class="generate-btn" id="generateBtn" onclick="generateCaption()">
+          <span id="btnIcon">✨</span>
+          <span id="btnText">Generate Caption Sekarang</span>
+        </button>
+      </div>
+      <div class="result-card" id="resultCard">
+        <div id="resultPlaceholder" class="result-placeholder">
+          <div class="icon-big">✍️</div>
+          <div>
+            <p style="font-weight:600;color:var(--text2);margin-bottom:6px;">Caption kamu akan muncul di sini</p>
+            <p style="font-size:14px;color:var(--text3);">Isi form di sebelah kiri dan klik Generate</p>
+          </div>
+        </div>
+        <div id="loadingState" class="loading-anim" style="display:none;">
+          <div class="loading-dots">
+            <div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div>
+          </div>
+          <p class="loading-text" id="loadingText">AI sedang menulis caption terbaik...</p>
+        </div>
+        <div id="resultContent" style="display:none;flex-direction:column;flex:1;">
+          <div class="result-header">
+            <span class="result-label" id="resultPlatformLabel">✨ Caption Siap</span>
+            <div class="result-actions">
+              <button class="action-btn" onclick="copyCaption()" id="copyBtn">📋 Copy</button>
+              <button class="action-btn" onclick="generateCaption()">🔄 Ulang</button>
+            </div>
+          </div>
+          <div class="result-text" id="resultText"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="fade-in" style="text-align:center;">
+      <div class="section-label">Testimoni</div>
+      <h2 class="section-title">Seller Sudah Buktikan!</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card fade-in"><div class="testi-stars">★★★★★</div><p class="testi-text">"Dulu bingung mau nulis caption apa buat produk skincare. Sekarang tinggal klik, caption langsung jadi! Omzet naik 2x lipat! 🔥"</p><div class="testi-author"><div class="testi-avatar" style="background:#FF4D1C;">AS</div><div><div class="testi-name">Aulia Sari</div><div class="testi-platform">🛍️ Seller Shopee • 2.1K followers</div></div></div></div>
+      <div class="testi-card fade-in"><div class="testi-stars">★★★★★</div><p class="testi-text">"WAJIB coba buat kalian yang jualan di TikTok Shop! Caption-nya relatable banget. Engagement langsung meledak bestie! ✨"</p><div class="testi-author"><div class="testi-avatar" style="background:#6C5CE7;">RD</div><div><div class="testi-name">Reza Darmawan</div><div class="testi-platform">🎵 TikTok Seller • 15K followers</div></div></div></div>
+      <div class="testi-card fade-in"><div class="testi-stars">★★★★★</div><p class="testi-text">"Sebagai ibu rumah tangga yang baru mulai jualan online, Riczz Shopp beneran ngebantu banget! Highly recommended! 💕"</p><div class="testi-author"><div class="testi-avatar" style="background:#00A878;">NL</div><div><div class="testi-name">Nita Lestari</div><div class="testi-platform">📸 Instagram Seller • 800 followers</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="harga" style="background:var(--bg2);">
+  <div class="pricing-inner">
+    <div class="fade-in" style="text-align:center;">
+      <div class="section-label">Harga</div>
+      <h2 class="section-title">Pilih Paket Sesuai Kebutuhan</h2>
+      <p class="section-sub" style="margin:0 auto;">Mulai gratis, upgrade kapan saja. Tanpa kartu kredit.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card fade-in">
+        <div class="price-name">Starter</div>
+        <div class="price-amount">Gratis<span> / bulan</span></div>
+        <div class="price-desc">Untuk seller yang baru mulai</div>
+        <ul class="price-features">
+          <li>5 caption per hari</li>
+          <li>3 gaya caption</li>
+          <li>TikTok Shop & Shopee</li>
+          <li>Hashtag otomatis</li>
+        </ul>
+        <button class="price-btn outline" onclick="scrollToGenerator()">Mulai Gratis</button>
+      </div>
+      <div class="price-card featured fade-in">
+        <div class="price-badge">🔥 Paling Populer</div>
+        <div class="price-name">Pro</div>
+        <div class="price-amount">Rp 79K<span> / bulan</span></div>
+        <div class="price-desc">Untuk seller yang serius jualan</div>
+        <ul class="price-features">
+          <li>Caption tanpa batas</li>
+          <li>Semua 7 gaya caption</li>
+          <li>Semua platform</li>
+          <li>Hashtag premium & trending</li>
+          <li>Simpan histori caption</li>
+          <li>Prioritas dukungan</li>
+        </ul>
+        <button class="price-btn filled" onclick="openPayment('Pro',79000,'Rp 79.000')">Upgrade Sekarang →</button>
+      </div>
+      <div class="price-card fade-in">
+        <div class="price-name">Bisnis</div>
+        <div class="price-amount">Rp 199K<span> / bulan</span></div>
+        <div class="price-desc">Untuk tim dan reseller besar</div>
+        <ul class="price-features">
+          <li>Semua fitur Pro</li>
+          <li>5 akun tim</li>
+          <li>API access</li>
+          <li>Custom brand tone</li>
+          <li>Laporan performa</li>
+          <li>Dedicated support</li>
+        </ul>
+        <button class="price-btn outline" onclick="openPayment('Bisnis',199000,'Rp 199.000')">Upgrade Sekarang →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--bg);">
+  <div class="faq-inner">
+    <div class="fade-in" style="text-align:center;">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Pertanyaan Umum</h2>
+    </div>
+    <div class="faq-list fade-in">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Apakah Riczz Shopp benar-benar gratis? <span class="arrow">▾</span></button><div class="faq-a"><div class="faq-a-inner">Ya! Paket Starter sepenuhnya gratis dengan 5 caption per hari. Kamu bisa upgrade ke paket Pro kapan saja jika butuh lebih banyak fitur dan caption tanpa batas.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Apakah caption yang dihasilkan bisa langsung dipakai? <span class="arrow">▾</span></button><div class="faq-a"><div class="faq-a-inner">Tentu! Caption yang dihasilkan AI langsung siap pakai, sudah termasuk emoji yang pas, CTA yang kuat, dan hashtag relevan. Kamu bisa langsung copy-paste ke toko online kamu.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Platform apa saja yang didukung? <span class="arrow">▾</span></button><div class="faq-a"><div class="faq-a-inner">Riczz Shopp mendukung TikTok Shop, Shopee, Instagram, Tokopedia, dan Lazada.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Bagaimana sistem pembayaran premium? <span class="arrow">▾</span></button><div class="faq-a"><div class="faq-a-inner">Kami menggunakan Midtrans sebagai payment gateway. Mendukung QRIS, GoPay, DANA, dan transfer bank. Premium hanya aktif setelah Midtrans mengkonfirmasi pembayaran BERHASIL. Jika pending atau gagal, akun tetap FREE.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Apakah data produk saya aman? <span class="arrow">▾</span></button><div class="faq-a"><div class="faq-a-inner">100% aman. Data yang kamu masukkan hanya digunakan untuk proses generate caption dan tidak disimpan atau dibagikan ke pihak manapun.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2>Siap Jualan Lebih Viral?</h2>
+  <p>Bergabung bersama 12.000+ seller yang sudah boost penjualan mereka</p>
+  <button class="btn-white" onclick="handleHeroCTA()">✨ Coba Gratis Sekarang</button>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="logo">Riczz<span style="color:var(--text)">Shopp</span></a>
+        <p>Platform AI caption generator #1 untuk seller Indonesia. Buat caption viral dalam hitungan detik.</p>
+      </div>
+      <div class="footer-col"><h4>Produk</h4><a href="#">Generator Caption</a><a href="#" onclick="openPayment('Pro',79000,'Rp 79.000');return false;">Paket Pro</a><a href="#">API</a></div>
+      <div class="footer-col"><h4>Perusahaan</h4><a href="#">Tentang Kami</a><a href="#">Blog</a><a href="#">Karir</a></div>
+      <div class="footer-col"><h4>Bantuan</h4><a href="#faq">FAQ</a><a href="#">Hubungi Kami</a><a href="#">Kebijakan Privasi</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Riczz Shopp. Dibuat dengan ❤️ di Indonesia.</span>
+      <span>🎵 TikTok · 🛍️ Shopee · 📸 Instagram</span>
+    </div>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ========== AUTH MODALS ========== -->
+<div class="overlay" id="loginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+    <div class="modal-logo">Riczz<span>Shopp</span></div>
+    <h2>Selamat Datang 👋</h2>
+    <p class="subtitle">Login untuk mulai generate caption viral</p>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="email@kamu.com" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" />
+    </div>
+    <button class="btn-full" id="loginBtn" onclick="doLogin()">
+      <span>🔐 Masuk Sekarang</span>
+    </button>
+    <div class="modal-switch">Belum punya akun? <a onclick="switchModal('loginModal','registerModal')">Daftar Gratis →</a></div>
+  </div>
+</div>
+
+<div class="overlay" id="registerModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('registerModal')">✕</button>
+    <div class="modal-logo">Riczz<span>Shopp</span></div>
+    <h2>Daftar Gratis ✨</h2>
+    <p class="subtitle">Buat akun dan mulai generate caption sekarang</p>
+    <div class="form-group">
+      <label>Nama Lengkap</label>
+      <input type="text" id="regName" placeholder="Nama kamu" />
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="regEmail" placeholder="email@kamu.com" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="regPassword" placeholder="Min. 6 karakter" />
+    </div>
+    <button class="btn-full" id="registerBtn" onclick="doRegister()">
+      <span>🚀 Buat Akun Sekarang</span>
+    </button>
+    <div class="modal-switch">Sudah punya akun? <a onclick="switchModal('registerModal','loginModal')">Login →</a></div>
+  </div>
+</div>
+
+<div class="overlay" id="dashboardModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('dashboardModal')">✕</button>
+    <div id="dashboardContent"></div>
+  </div>
+</div>
+
+<!-- ========== PAYMENT MODAL (Midtrans Real) ========== -->
+<div class="overlay" id="paymentModal">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="closeModal('paymentModal')">✕</button>
+    <div class="modal-logo">Riczz<span>Shopp</span></div>
+    <h2>Upgrade ke Premium 🚀</h2>
+    <p class="subtitle">Pembayaran aman via Midtrans — Sandbox Mode</p>
+
+    <!-- KONFIGURASI SETUP INFO -->
+    <div class="config-banner" id="configBanner">
+      <h4>⚙️ Setup Midtrans di Backend</h4>
+      <p>Sebelum go-live, pastikan environment variables berikut sudah dikonfigurasi di server/backend kamu:<br><br>
+      <code>MIDTRANS_CLIENT_KEY</code> — digunakan di frontend (aman)<br>
+      <code>MIDTRANS_SERVER_KEY</code> — hanya di backend, <strong>JANGAN expose ke browser</strong><br><br>
+      Endpoint backend yang diperlukan:<br>
+      <code>POST /api/payment/create-transaction</code><br>
+      <code>POST /api/payment/verify</code><br>
+      <code>POST /api/payment/webhook</code>
+      </p>
+    </div>
+
+    <div class="pay-sandbox-badge">🧪 Sandbox Mode — Gunakan kartu test Midtrans</div>
+    <div class="pay-plan" id="payPlanInfo"></div>
+
+    <div id="paymentFlowContainer">
+      <!-- Step 1: Pilih paket -->
+      <div id="payStep1">
+        <p style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;">Metode Pembayaran (via Midtrans Snap):</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+          <div class="pay-method-card active" onclick="selectPayMethod2(this,'qris')" data-method="qris">
+            <div style="font-size:20px;margin-bottom:4px;">📱</div>
+            <div style="font-size:13px;font-weight:700;">QRIS</div>
+            <div style="font-size:11px;color:var(--text3);">Scan & bayar</div>
+          </div>
+          <div class="pay-method-card" onclick="selectPayMethod2(this,'gopay')" data-method="gopay">
+            <div style="font-size:20px;margin-bottom:4px;">💚</div>
+            <div style="font-size:13px;font-weight:700;">GoPay</div>
+            <div style="font-size:11px;color:var(--text3);">Dompet digital</div>
+          </div>
+          <div class="pay-method-card" onclick="selectPayMethod2(this,'dana')" data-method="dana">
+            <div style="font-size:20px;margin-bottom:4px;">💙</div>
+            <div style="font-size:13px;font-weight:700;">DANA</div>
+            <div style="font-size:11px;color:var(--text3);">Dompet digital</div>
+          </div>
+          <div class="pay-method-card" onclick="selectPayMethod2(this,'bank_transfer')" data-method="bank_transfer">
+            <div style="font-size:20px;margin-bottom:4px;">🏦</div>
+            <div style="font-size:13px;font-weight:700;">Bank Transfer</div>
+            <div style="font-size:11px;color:var(--text3);">VA BCA/BNI/Mandiri</div>
+          </div>
+        </div>
+        <button class="btn-full" id="payBtn" onclick="initiateMidtransPayment()">
+          <span id="payBtnText">💳 Lanjut Bayar via Midtrans</span>
+        </button>
+        <div class="pay-security-info">
+          🔒 Pembayaran diproses oleh Midtrans (PCI DSS Certified). Server key tidak pernah dikirim ke browser.
+        </div>
+      </div>
+
+      <!-- Step 2: Menunggu verifikasi -->
+      <div id="payStep2" style="display:none;text-align:center;padding:20px 0;">
+        <div style="font-size:48px;margin-bottom:16px;">⏳</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:8px;">Menunggu Pembayaran...</div>
+        <div style="font-size:14px;color:var(--text2);margin-bottom:20px;">Selesaikan pembayaran di jendela Midtrans yang terbuka. Akun hanya akan upgrade setelah pembayaran dikonfirmasi.</div>
+        <div class="pay-txn-info" id="payTxnInfo"></div>
+        <div style="margin-top:16px;">
+          <button class="btn-full" onclick="checkPaymentStatus()" style="margin-bottom:8px;">
+            <span>🔄 Cek Status Pembayaran</span>
+          </button>
+          <button onclick="cancelPayment()" style="width:100%;background:transparent;border:1px solid var(--border2);color:var(--text2);border-radius:var(--radius-xs);padding:12px;font-size:14px;cursor:pointer;">Batalkan</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Status hasil -->
+      <div id="payStep3" style="display:none;">
+        <div class="pay-status-box" id="payStatusBox"></div>
+      </div>
+    </div>
+
+    <p class="pay-note">🔒 Server key Midtrans hanya ada di backend. Premium aktif HANYA setelah verifikasi server berhasil.</p>
+  </div>
+</div>
+
+<style>
+.pay-method-card{border:2px solid var(--border2);border-radius:var(--radius-xs);padding:14px;cursor:pointer;text-align:center;transition:all 0.2s;color:var(--text2);background:var(--bg3);}
+.pay-method-card.active{border-color:var(--accent);background:var(--accent-bg);}
+.pay-method-card:hover:not(.active){border-color:var(--border2);background:var(--bg2);}
+</style>
+
+<!-- Midtrans Snap SDK (Sandbox) -->
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SET_YOUR_MIDTRANS_CLIENT_KEY_HERE"></script>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script>
+// ================================================================
+// ⚠️  MIDTRANS SECURITY ARCHITECTURE
+// ================================================================
+// FRONTEND (file ini): Hanya boleh menyimpan MIDTRANS_CLIENT_KEY
+// BACKEND (server kamu): Menyimpan MIDTRANS_SERVER_KEY
+//
+// Alur pembayaran yang AMAN:
+// 1. Frontend → POST /api/payment/create-transaction (backend buat token)
+// 2. Backend gunakan SERVER_KEY untuk minta Snap Token ke Midtrans
+// 3. Backend kembalikan snap_token ke frontend
+// 4. Frontend buka Midtrans Snap popup dengan snap_token
+// 5. User bayar → Midtrans kirim webhook ke backend
+// 6. Backend verifikasi signature dengan SERVER_KEY
+// 7. Backend update premium status di database
+// 8. Frontend poll /api/payment/verify untuk cek status
+// ================================================================
+
+// ===== KONFIGURASI =====
+// Client key boleh di frontend. Server key HARUS di backend .env
+const MIDTRANS_CLIENT_KEY = 'SET_YOUR_MIDTRANS_CLIENT_KEY_HERE';
+const BACKEND_URL = 'https://your-backend.com'; // Ganti dengan URL backend kamu
+
+// ===== CONSTANTS =====
+const OWNER_EMAIL = 'riczkntl@gmail.com';
+const FREE_DAILY_LIMIT = 5;
+const PREMIUM_STYLES = ['Gen Z','Affiliate','Elegan','Lucu'];
+const FREE_STYLES = ['Soft Selling','Hard Selling','FOMO'];
+const STORAGE_KEY = 'riczzShopp_users';
+const SESSION_KEY = 'riczzShopp_session';
+const TXN_KEY = 'riczzShopp_pending_txn';
+
+// ===== LOCAL DATABASE (localStorage - untuk demo) =====
+function getDB() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+}
+function saveDB(db) { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+function getSession() {
+  try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; }
+}
+function saveSession(user) { localStorage.setItem(SESSION_KEY, JSON.stringify(user)); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+function getPendingTxn() {
+  try { return JSON.parse(localStorage.getItem(TXN_KEY) || 'null'); } catch { return null; }
+}
+function savePendingTxn(txn) { localStorage.setItem(TXN_KEY, JSON.stringify(txn)); }
+function clearPendingTxn() { localStorage.removeItem(TXN_KEY); }
+
+// ===== TRANSACTION DATABASE (dalam localStorage - production: pakai real DB) =====
+const TXN_DB_KEY = 'riczzShopp_transactions';
+function getTxnDB() {
+  try { return JSON.parse(localStorage.getItem(TXN_DB_KEY) || '{}'); } catch { return {}; }
+}
+function saveTxnDB(db) { localStorage.setItem(TXN_DB_KEY, JSON.stringify(db)); }
+
+function createTransaction(txnData) {
+  const db = getTxnDB();
+  db[txnData.transaction_id] = {
+    ...txnData,
+    created_at: new Date().toISOString(),
+    payment_status: 'pending'
+  };
+  saveTxnDB(db);
+  return db[txnData.transaction_id];
+}
+
+function updateTransaction(txnId, updates) {
+  const db = getTxnDB();
+  if (db[txnId]) {
+    db[txnId] = { ...db[txnId], ...updates, updated_at: new Date().toISOString() };
+    saveTxnDB(db);
+  }
+  return db[txnId];
+}
+
+function getTransaction(txnId) {
+  const db = getTxnDB();
+  return db[txnId] || null;
+}
+
+// ===== USER HELPERS =====
+let currentUser = getSession();
+
+function isOwner(email) {
+  return email && email.toLowerCase() === OWNER_EMAIL.toLowerCase();
+}
+
+function isPremium(user) {
+  if (!user) return false;
+  if (isOwner(user.email)) return true;
+  if (user.plan !== 'premium') return false;
+  if (!user.premium_expired_at) return false;
+  return new Date(user.premium_expired_at) > new Date();
+}
+
+function getTodayKey() { return new Date().toISOString().slice(0,10); }
+
+function getGeneratesLeft(user) {
+  if (!user) return FREE_DAILY_LIMIT;
+  if (isPremium(user)) return Infinity;
+  const today = getTodayKey();
+  const used = (user.dailyUsage && user.dailyUsage[today]) || 0;
+  return Math.max(0, FREE_DAILY_LIMIT - used);
+}
+
+function incrementUsage(user) {
+  const today = getTodayKey();
+  if (!user.dailyUsage) user.dailyUsage = {};
+  user.dailyUsage[today] = (user.dailyUsage[today] || 0) + 1;
+  const db = getDB();
+  db[user.email] = user;
+  saveDB(db);
+  saveSession(user);
+  return user;
+}
+
+function getAvatarColor(email) {
+  const colors = ['#FF4D1C','#6C5CE7','#00A878','#F59E0B','#3B82F6','#EC4899'];
+  let hash = 0;
+  for (let c of (email||'')) hash = c.charCodeAt(0) + ((hash<<5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+
+function getInitials(name) {
+  if (!name) return '?';
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+}
+
+// ===== AUTH =====
+function doRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim().toLowerCase();
+  const password = document.getElementById('regPassword').value;
+  if (!name) { showToast('⚠️ Isi nama lengkap kamu!','error'); return; }
+  if (!email || !email.includes('@')) { showToast('⚠️ Email tidak valid!','error'); return; }
+  if (password.length < 6) { showToast('⚠️ Password minimal 6 karakter!','error'); return; }
+  const db = getDB();
+  if (db[email]) { showToast('⚠️ Email sudah terdaftar. Silakan login.','error'); return; }
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true; btn.innerHTML = '<span>⏳ Membuat akun...</span>';
+  setTimeout(() => {
+    const user = {
+      name, email,
+      password: btoa(password),
+      plan: isOwner(email) ? 'premium' : 'free',
+      premium_expired_at: isOwner(email) ? '2099-12-31T00:00:00.000Z' : null,
+      payment_status: isOwner(email) ? 'owner' : null,
+      transaction_id: null,
+      upgradeDate: isOwner(email) ? new Date().toISOString() : null,
+      joinDate: new Date().toISOString(),
+      dailyUsage: {}
+    };
+    db[email] = user;
+    saveDB(db);
+    currentUser = user;
+    saveSession(user);
+    closeModal('registerModal');
+    renderNavUser(); renderLimitBar(); renderStyleChips(); renderUpgradeCTA();
+    showToast('🎉 Akun berhasil dibuat! Selamat datang, ' + name + (isPremium(user) ? ' 👑' : ''),'success');
+    btn.disabled = false; btn.innerHTML = '<span>🚀 Buat Akun Sekarang</span>';
+  }, 1000);
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) { showToast('⚠️ Isi email dan password!','error'); return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.innerHTML = '<span>⏳ Memverifikasi...</span>';
+  setTimeout(() => {
+    const db = getDB();
+    const user = db[email];
+    if (!user) { showToast('❌ Email tidak ditemukan.','error'); btn.disabled=false;btn.innerHTML='<span>🔐 Masuk Sekarang</span>';return; }
+    if (user.password !== btoa(password)) { showToast('❌ Password salah.','error'); btn.disabled=false;btn.innerHTML='<span>🔐 Masuk Sekarang</span>';return; }
+    if (isOwner(email) && user.plan !== 'premium') {
+      user.plan = 'premium';
+      user.premium_expired_at = '2099-12-31T00:00:00.000Z';
+      user.upgradeDate = new Date().toISOString();
+      db[email] = user; saveDB(db);
+    }
+    currentUser = user;
+    saveSession(user);
+    closeModal('loginModal');
+    renderNavUser(); renderLimitBar(); renderStyleChips(); renderUpgradeCTA();
+    showToast((isPremium(user) ? '👑' : '👋') + ' Selamat datang kembali, ' + user.name + '!','success');
+    btn.disabled=false;btn.innerHTML='<span>🔐 Masuk Sekarang</span>';
+  }, 1000);
+}
+
+function doLogout() {
+  closeModal('dashboardModal');
+  currentUser = null;
+  clearSession();
+  clearPendingTxn();
+  renderNavUser(); renderLimitBar(); renderStyleChips(); renderUpgradeCTA();
+  showToast('👋 Kamu telah logout.','info');
+}
+
+// ================================================================
+// ===== MIDTRANS PAYMENT SYSTEM (SECURE) =====
+// ================================================================
+
+// Premium HANYA diaktifkan setelah verifikasi dari Midtrans server
+// Tidak ada cara untuk bypass — status diverifikasi via server/webhook
+
+function activatePremiumAfterVerification(transactionId, planName) {
+  // HANYA dipanggil setelah verifikasi server berhasil
+  if (!currentUser) return;
+  const db = getDB();
+  const expiry = new Date();
+  expiry.setMonth(expiry.getMonth() + 1);
+
+  currentUser.plan = 'premium';
+  currentUser.premium_expired_at = expiry.toISOString();
+  currentUser.upgradeDate = new Date().toISOString();
+  currentUser.transaction_id = transactionId;
+  currentUser.payment_status = 'settlement';
+
+  db[currentUser.email] = currentUser;
+  saveDB(db);
+  saveSession(currentUser);
+  clearPendingTxn();
+
+  updateTransaction(transactionId, {
+    payment_status: 'settlement',
+    premium_expired_at: expiry.toISOString(),
+    settled_at: new Date().toISOString()
+  });
+}
+
+// Payment state
+let _payPlan = '', _payPrice = 0, _payPriceLabel = '';
+let _selectedMethod = 'qris';
+let _currentTxnId = null;
+let _snapToken = null;
+
+function openPayment(plan, priceNum, priceLabel) {
+  if (!currentUser) { openModal('loginModal'); return; }
+  if (isPremium(currentUser)) { showToast('✨ Kamu sudah Premium!','info'); return; }
+  _payPlan = plan; _payPrice = priceNum; _payPriceLabel = priceLabel;
+  document.getElementById('payPlanInfo').innerHTML = `
+    <div><div class="pay-plan-name">Paket ${plan}</div><div style="font-size:13px;color:var(--text2);">Akses penuh 1 bulan</div></div>
+    <div class="pay-plan-price">${priceLabel}</div>`;
+  // Reset flow ke step 1
+  showPayStep(1);
+  openModal('paymentModal');
+}
+
+function showPayStep(step) {
+  document.getElementById('payStep1').style.display = step === 1 ? 'block' : 'none';
+  document.getElementById('payStep2').style.display = step === 2 ? 'block' : 'none';
+  document.getElementById('payStep3').style.display = step === 3 ? 'block' : 'none';
+}
+
+function selectPayMethod2(el, method) {
+  document.querySelectorAll('.pay-method-card').forEach(m => m.classList.remove('active'));
+  el.classList.add('active');
+  _selectedMethod = method;
+}
+
+// ================================================================
+// ALUR PEMBAYARAN REAL MIDTRANS:
+//
+// 1. Frontend panggil backend untuk buat transaksi
+// 2. Backend pakai SERVER_KEY buat Snap Token
+// 3. Frontend buka Snap popup
+// 4. User bayar
+// 5. Midtrans kirim webhook ke backend  ← backend verifikasi signature
+// 6. Backend update premium di database
+// 7. Frontend poll status dari backend
+// ================================================================
+
+async function initiateMidtransPayment() {
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  document.getElementById('payBtnText').textContent = '⏳ Membuat transaksi...';
+
+  // Generate transaction ID unik
+  _currentTxnId = 'RICZZSHP-' + Date.now() + '-' + Math.random().toString(36).substr(2,6).toUpperCase();
+
+  // Simpan transaksi di local database dengan status PENDING
+  const txnRecord = createTransaction({
+    transaction_id: _currentTxnId,
+    user_email: currentUser.email,
+    user_name: currentUser.name,
+    plan: _payPlan,
+    amount: _payPrice,
+    payment_method: _selectedMethod,
+    payment_status: 'pending', // PENDING dulu, BUKAN premium
+    snap_token: null,
+    premium_expired_at: null
+  });
+
+  savePendingTxn({ txn_id: _currentTxnId, plan: _payPlan, price: _payPrice });
+
+  // ⚠️ PRODUCTION: Panggil backend untuk dapatkan Snap Token
+  // Backend akan gunakan SERVER_KEY (dari env variable) untuk minta token ke Midtrans
+  // Contoh endpoint yang harus kamu buat di backend:
+  //
+  // POST /api/payment/create-transaction
+  // Request body: { transaction_id, user_email, amount, plan, payment_method }
+  // Response: { snap_token, redirect_url }
+  //
+  // Di backend (Node.js/Express contoh):
+  // const midtransClient = require('midtrans-client');
+  // const snap = new midtransClient.Snap({
+  //   isProduction: false,
+  //   serverKey: process.env.MIDTRANS_SERVER_KEY  // ← Dari .env, TIDAK dikirim ke frontend
+  // });
+  // const token = await snap.createTransactionToken({ ... });
+
+  // ─── SIMULASI (Hapus ini di production, ganti dengan API call nyata) ───
+  const USING_REAL_BACKEND = false; // Set true jika backend sudah ready
+
+  if (USING_REAL_BACKEND) {
+    // PRODUCTION CODE:
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/payment/create-transaction`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          transaction_id: _currentTxnId,
+          user_email: currentUser.email,
+          user_name: currentUser.name,
+          amount: _payPrice,
+          plan: _payPlan,
+          payment_method: _selectedMethod
+        })
+      });
+      const data = await response.json();
+      if (!data.snap_token) throw new Error('Gagal mendapatkan token pembayaran');
+      _snapToken = data.snap_token;
+      updateTransaction(_currentTxnId, { snap_token: _snapToken });
+      openMidtransSnap(_snapToken);
+    } catch (err) {
+      showToast('❌ Gagal menghubungi server: ' + err.message, 'error');
+      btn.disabled = false;
+      document.getElementById('payBtnText').textContent = '💳 Lanjut Bayar via Midtrans';
+      return;
+    }
+  } else {
+    // ─── SANDBOX DEMO MODE ───
+    // Simulasi mendapatkan snap token dari server
+    // Di production, ini diganti dengan API call ke backend
+    setTimeout(() => {
+      _snapToken = 'SANDBOX-TOKEN-' + _currentTxnId;
+      updateTransaction(_currentTxnId, { snap_token: _snapToken });
+      openMidtransSandboxDemo();
+    }, 1500);
+  }
+}
+
+function openMidtransSandboxDemo() {
+  // PRODUCTION: Gunakan snap.pay(_snapToken, callbacks) — lihat openMidtransSnap()
+  // Ini adalah simulasi UI Midtrans untuk demo/pengembangan lokal
+
+  const btn = document.getElementById('payBtn');
+  btn.disabled = false;
+  document.getElementById('payBtnText').textContent = '💳 Lanjut Bayar via Midtrans';
+
+  // Tampilkan step 2 (menunggu pembayaran)
+  document.getElementById('payTxnInfo').innerHTML = `
+    Transaction ID: ${_currentTxnId}<br>
+    Snap Token: ${_snapToken}<br>
+    Amount: Rp ${_payPrice.toLocaleString('id-ID')}<br>
+    Method: ${_selectedMethod.toUpperCase()}<br>
+    Status: PENDING — Menunggu pembayaran
+  `;
+  showPayStep(2);
+
+  // Buka Midtrans Snap (jika Snap SDK sudah termuat dengan client key yang benar)
+  if (typeof window.snap !== 'undefined' && !_snapToken.startsWith('SANDBOX-TOKEN-')) {
+    openMidtransSnap(_snapToken);
+  } else {
+    // Fallback UI jika Snap SDK belum dikonfigurasi
+    showDemoPaymentUI();
+  }
+}
+
+function openMidtransSnap(snapToken) {
+  // PRODUCTION: ini adalah cara yang benar membuka Midtrans Snap
+  // snap.js sudah diload di atas dengan data-client-key dari MIDTRANS_CLIENT_KEY
+  window.snap.pay(snapToken, {
+    onSuccess: function(result) {
+      console.log('Payment success:', result);
+      // JANGAN langsung aktifkan premium di sini!
+      // Tunggu verifikasi dari backend via webhook/polling
+      verifyPaymentFromServer(result.order_id, result);
+    },
+    onPending: function(result) {
+      console.log('Payment pending:', result);
+      showPaymentStatus('pending', result.order_id);
+    },
+    onError: function(result) {
+      console.log('Payment error:', result);
+      showPaymentStatus('failed', result.order_id);
+    },
+    onClose: function() {
+      // User menutup popup tanpa bayar
+      showToast('ℹ️ Pembayaran dibatalkan. Status akun tetap FREE.', 'info');
+      showPayStep(1);
+    }
+  });
+}
+
+// Verifikasi pembayaran dari server (AMAN — server key di backend)
+async function verifyPaymentFromServer(orderId, snapResult) {
+  showToast('🔄 Memverifikasi pembayaran...', 'info');
+
+  const USING_REAL_BACKEND = false; // Set true jika backend sudah ready
+
+  if (USING_REAL_BACKEND) {
+    // PRODUCTION: Verifikasi ke backend
+    // Backend akan gunakan SERVER_KEY untuk query status ke Midtrans API
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/payment/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order_id: orderId,
+          transaction_id: _currentTxnId,
+          user_email: currentUser.email
+        })
+      });
+      const data = await response.json();
+
+      if (data.payment_status === 'settlement' || data.payment_status === 'capture') {
+        // ✅ SUKSES: Premium diaktifkan setelah verifikasi server
+        activatePremiumAfterVerification(_currentTxnId, _payPlan);
+        showPaymentStatus('success', _currentTxnId);
+        renderNavUser(); renderLimitBar(); renderStyleChips(); renderUpgradeCTA();
+        showToast('🎉 PREMIUM AKTIF! Terima kasih sudah upgrade! 👑', 'success');
+      } else if (data.payment_status === 'pending') {
+        // ⏳ PENDING: Akun tetap FREE
+        showPaymentStatus('pending', _currentTxnId);
+        showToast('⏳ Pembayaran pending. Akun tetap FREE sampai pembayaran dikonfirmasi.', 'info');
+      } else {
+        // ❌ GAGAL: Akun tetap FREE
+        showPaymentStatus('failed', _currentTxnId);
+        showToast('❌ Pembayaran gagal. Akun tetap FREE.', 'error');
+      }
+    } catch (err) {
+      showToast('⚠️ Gagal verifikasi: ' + err.message, 'error');
+    }
+  }
+}
+
+// Poll status pembayaran dari backend
+async function checkPaymentStatus() {
+  if (!_currentTxnId) { showToast('⚠️ Tidak ada transaksi aktif.', 'error'); return; }
+
+  const txn = getTransaction(_currentTxnId);
+  if (!txn) { showToast('⚠️ Transaksi tidak ditemukan.', 'error'); return; }
+
+  showToast('🔄 Mengecek status pembayaran...', 'info');
+
+  const USING_REAL_BACKEND = false;
+
+  if (USING_REAL_BACKEND) {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/payment/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: _currentTxnId, user_email: currentUser.email })
+      });
+      const data = await response.json();
+      handleVerificationResult(data.payment_status, _currentTxnId);
+    } catch(err) {
+      showToast('⚠️ Gagal cek status: ' + err.message, 'error');
+    }
+  } else {
+    // Demo mode: simulasi masih pending
+    showToast('ℹ️ [Demo] Status: PENDING. Di production, ini akan cek ke Midtrans via backend.', 'info');
+  }
+}
+
+function handleVerificationResult(status, txnId) {
+  if (status === 'settlement' || status === 'capture') {
+    activatePremiumAfterVerification(txnId, _payPlan);
+    showPaymentStatus('success', txnId);
+    renderNavUser(); renderLimitBar(); renderStyleChips(); renderUpgradeCTA();
+    showToast('🎉 PREMIUM AKTIF! Terima kasih! 👑', 'success');
+  } else if (status === 'pending') {
+    showToast('⏳ Masih pending. Akun tetap FREE.', 'info');
+  } else {
+    updateTransaction(txnId, { payment_status: 'failed' });
+    showPaymentStatus('failed', txnId);
+    showToast('❌ Pembayaran gagal. Akun tetap FREE.', 'error');
+  }
+}
+
+function cancelPayment() {
+  if (_currentTxnId) {
+    updateTransaction(_currentTxnId, { payment_status: 'cancelled' });
+  }
+  clearPendingTxn();
+  _currentTxnId = null;
+  _snapToken = null;
+  showPayStep(1);
+  showToast('ℹ️ Pembayaran dibatalkan. Akun tetap FREE.', 'info');
+}
+
+function showPaymentStatus(status, txnId) {
+  showPayStep(3);
+  const statusConfig = {
+    success: {
+      icon: '🎉',
+      title: 'Pembayaran Berhasil!',
+      desc: 'Akun kamu sudah diupgrade ke PREMIUM. Nikmati semua fitur tanpa batas!',
+      cls: 'pay-status-success',
+      btn: `<button class="btn-full" onclick="closeModal('paymentModal')" style="margin-top:16px;">✨ Mulai Pakai Premium</button>`
+    },
+    pending: {
+      icon: '⏳',
+      title: 'Pembayaran Menunggu Konfirmasi',
+      desc: 'Akun kamu tetap FREE sampai pembayaran dikonfirmasi oleh Midtrans. Biasanya 1-60 menit.',
+      cls: 'pay-status-pending',
+      btn: `<button class="btn-full" onclick="checkPaymentStatus()" style="margin-top:16px;">🔄 Cek Status Lagi</button>`
+    },
+    failed: {
+      icon: '❌',
+      title: 'Pembayaran Gagal',
+      desc: 'Transaksi gagal diproses. Akun kamu tetap FREE. Silakan coba lagi.',
+      cls: 'pay-status-failed',
+      btn: `<button class="btn-full" onclick="showPayStep(1)" style="margin-top:16px;">🔄 Coba Lagi</button>`
+    }
+  };
+  const cfg = statusConfig[status];
+  document.getElementById('payStatusBox').innerHTML = `
+    <div class="pay-status-icon">${cfg.icon}</div>
+    <div class="pay-status-title ${cfg.cls}">${cfg.title}</div>
+    <div class="pay-status-desc">${cfg.desc}</div>
+    <div class="pay-txn-info">Transaction ID: ${txnId}<br>Status: ${status.toUpperCase()}</div>
+    ${cfg.btn}
+  `;
+}
+
+// ================================================================
+// DEMO PAYMENT UI (Hanya untuk development/demo)
+// Di production, Midtrans Snap akan membuka popup sendiri
+// ================================================================
+function showDemoPaymentUI() {
+  // UI simulasi untuk testing tanpa backend
+  const methodLabels = {
+    qris: '📱 QRIS',
+    gopay: '💚 GoPay',
+    dana: '💙 DANA',
+    bank_transfer: '🏦 Bank Transfer'
+  };
+
+  // Buat popup demo di atas modal
+  const demoDiv = document.createElement('div');
+  demoDiv.id = 'midtransDemoPopup';
+  demoDiv.style.cssText = `
+    position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  `;
+  demoDiv.innerHTML = `
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:420px;padding:32px;color:#1A1814;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <img src="https://midtrans.com/assets/image/icon/midtrans-logo.svg" alt="Midtrans" style="height:28px;margin-bottom:8px;" onerror="this.style.display='none'">
+        <div style="font-weight:800;font-size:20px;color:#FF4D1C;">Midtrans</div>
+        <div style="font-size:13px;color:#9B9890;margin-top:4px;">🧪 Sandbox Mode</div>
+      </div>
+      <div style="background:#F7F5F0;border-radius:8px;padding:16px;margin-bottom:20px;">
+        <div style="font-size:13px;color:#5C5A55;margin-bottom:4px;">Total Pembayaran</div>
+        <div style="font-size:28px;font-weight:800;">Rp ${_payPrice.toLocaleString('id-ID')}</div>
+        <div style="font-size:13px;color:#9B9890;">Paket ${_payPlan} — Riczz Shopp</div>
+        <div style="font-size:12px;color:#6C5CE7;margin-top:4px;">Order: ${_currentTxnId}</div>
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:10px;">Metode: ${methodLabels[_selectedMethod]}</div>
+      <div style="font-size:13px;color:#5C5A55;background:#FFF0EB;border:1px solid rgba(255,77,28,0.2);border-radius:8px;padding:12px;margin-bottom:20px;">
+        ℹ️ <strong>Ini adalah simulasi Midtrans Sandbox.</strong><br>
+        Di production, popup asli Midtrans akan muncul di sini.<br>
+        Klik "Bayar Sekarang" untuk simulasi pembayaran BERHASIL,<br>
+        atau "Simulasi Gagal" untuk pembayaran GAGAL.
+      </div>
+      <div style="display:grid;gap:10px;">
+        <button onclick="simulatePaymentSuccess()" style="background:#FF4D1C;color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;">✅ Bayar Sekarang (Simulasi Berhasil)</button>
+        <button onclick="simulatePaymentPending()" style="background:#F59E0B;color:#000;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;">⏳ Simulasi Pending</button>
+        <button onclick="simulatePaymentFailed()" style="background:transparent;border:1px solid #ef4444;color:#ef4444;border-radius:8px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;">❌ Simulasi Gagal</button>
+        <button onclick="closeDemoPopup()" style="background:transparent;border:1px solid #ccc;color:#666;border-radius:8px;padding:12px;font-size:14px;cursor:pointer;">✕ Tutup</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(demoDiv);
+}
+
+function closeDemoPopup() {
+  const popup = document.getElementById('midtransDemoPopup');
+  if (popup) popup.remove();
+}
+
+// Simulasi: Pembayaran BERHASIL
+// Di production, ini terjadi via webhook dari Midtrans ke backend
+function simulatePaymentSuccess() {
+  closeDemoPopup();
+
+  // Simulasi: Backend menerima webhook SETTLEMENT dari Midtrans
+  // Backend verifikasi signature, lalu update premium
+  // Frontend mendapat notifikasi via polling atau websocket
+
+  setTimeout(() => {
+    // Simulasikan verifikasi berhasil dari server
+    activatePremiumAfterVerification(_currentTxnId, _payPlan);
+    showPaymentStatus('success', _currentTxnId);
+    renderNavUser(); renderLimitBar(); renderStyleChips(); renderUpgradeCTA();
+    showToast('🎉 [Demo] Pembayaran berhasil! PREMIUM AKTIF! 👑', 'success');
+  }, 500);
+}
+
+// Simulasi: Pembayaran PENDING
+function simulatePaymentPending() {
+  closeDemoPopup();
+  updateTransaction(_currentTxnId, { payment_status: 'pending' });
+  showPaymentStatus('pending', _currentTxnId);
+  showToast('⏳ [Demo] Pembayaran pending. Akun tetap FREE.', 'info');
+}
+
+// Simulasi: Pembayaran GAGAL
+function simulatePaymentFailed() {
+  closeDemoPopup();
+  updateTransaction(_currentTxnId, { payment_status: 'failed' });
+  showPaymentStatus('failed', _currentTxnId);
+  showToast('❌ [Demo] Pembayaran gagal. Akun tetap FREE.', 'error');
+}
+
+// ================================================================
+// WEBHOOK ENDPOINT (Backend Implementation)
+// ================================================================
+// Di backend kamu, buat endpoint ini:
+//
+// POST /api/payment/webhook
+// Handler:
+// 1. Terima notifikasi dari Midtrans
+// 2. Verifikasi signature_key:
+//    SHA512(order_id + status_code + gross_amount + server_key)
+// 3. Jika signature valid:
+//    - Jika transaction_status == 'settlement' || 'capture' → update premium
+//    - Jika transaction_status == 'pending' → akun tetap FREE
+//    - Jika transaction_status == 'deny'/'cancel'/'expire' → akun tetap FREE
+// 4. Respond 200 OK ke Midtrans
+//
+// Contoh Node.js (Express):
+// app.post('/api/payment/webhook', async (req, res) => {
+//   const { order_id, status_code, gross_amount, signature_key, transaction_status } = req.body;
+//   const serverKey = process.env.MIDTRANS_SERVER_KEY; // Dari .env
+//   const expectedSig = crypto.createHash('sha512')
+//     .update(order_id + status_code + gross_amount + serverKey)
+//     .digest('hex');
+//   if (signature_key !== expectedSig) return res.status(403).json({ error: 'Invalid signature' });
+//   if (['settlement','capture'].includes(transaction_status)) {
+//     await db.users.updatePremium(order_id); // Update di database
+//   }
+//   res.status(200).json({ status: 'ok' });
+// });
+// ================================================================
+
+// ===== RENDER FUNCTIONS =====
+function renderNavUser() {
+  const navAuthArea = document.getElementById('navAuthArea');
+  const navUserArea = document.getElementById('navUserArea');
+  if (currentUser) {
+    const premium = isPremium(currentUser);
+    navAuthArea.innerHTML = '';
+    navUserArea.innerHTML = `
+      <div class="nav-user">
+        <span class="badge-pill ${premium ? 'badge-premium' : 'badge-free'}">${premium ? '👑 PREMIUM' : 'FREE'}</span>
+        <div class="nav-avatar ${premium ? 'premium' : ''}" style="background:${getAvatarColor(currentUser.email)}" onclick="openDashboard()" title="Dashboard Akun">
+          ${getInitials(currentUser.name)}
+        </div>
+      </div>`;
+  } else {
+    navAuthArea.innerHTML = `
+      <a href="#" onclick="openModal('loginModal');return false;">Login</a>
+      <a href="#" class="nav-cta" onclick="openModal('registerModal');return false;">✨ Daftar Gratis</a>`;
+    navUserArea.innerHTML = '';
+  }
+}
+
+function renderLimitBar() {
+  const container = document.getElementById('limitBarContainer');
+  if (!container) return;
+  if (!currentUser) {
+    container.innerHTML = `<div class="limit-bar"><span class="limit-text">Login untuk mulai generate caption</span><button onclick="openModal('loginModal')" style="background:var(--accent);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;">Login</button></div>`;
+    return;
+  }
+  const premium = isPremium(currentUser);
+  if (premium) {
+    container.innerHTML = `<div class="limit-bar"><span class="limit-text">👑 Akun Premium — Generate Tanpa Batas</span><span class="limit-count unlimited">∞ Unlimited</span></div>`;
+  } else {
+    const left = getGeneratesLeft(currentUser);
+    container.innerHTML = `<div class="limit-bar"><span class="limit-text">Generate gratis hari ini</span><span class="limit-count ${left <= 1 ? 'danger' : 'ok'}">${left} / ${FREE_DAILY_LIMIT} tersisa</span></div>`;
+  }
+}
+
+function renderUpgradeCTA() {
+  const container = document.getElementById('upgradeCTAContainer');
+  if (!container) return;
+  if (!currentUser || isPremium(currentUser)) { container.innerHTML = ''; return; }
+  container.innerHTML = `<div class="upgrade-cta"><div class="upgrade-cta-text"><strong>🔒 Unlock Semua Fitur Premium</strong>Caption unlimited · 7 gaya · Semua platform</div><button class="upgrade-cta-btn" onclick="openPayment('Pro',79000,'Rp 79.000')">Upgrade →</button></div>`;
+}
+
+function renderStyleChips() {
+  document.querySelectorAll('.style-chip').forEach(chip => {
+    const style = chip.dataset.style;
+    const isPrem = PREMIUM_STYLES.includes(style);
+    if (isPrem && (!currentUser || !isPremium(currentUser))) {
+      chip.classList.add('locked'); chip.classList.remove('active');
+      if (!chip.querySelector('.lock-icon')) chip.innerHTML += '<span class="lock-icon">🔒</span>';
+      chip.onclick = (e) => { e.stopPropagation(); openPayment('Pro',79000,'Rp 79.000'); };
+    } else {
+      chip.classList.remove('locked');
+      const lockIcon = chip.querySelector('.lock-icon');
+      if (lockIcon) lockIcon.remove();
+      chip.onclick = null;
+    }
+  });
+}
+
+// ===== DASHBOARD =====
+function openDashboard() {
+  if (!currentUser) { openModal('loginModal'); return; }
+  const premium = isPremium(currentUser);
+  const left = getGeneratesLeft(currentUser);
+  const joinDate = new Date(currentUser.joinDate).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  const expiry = currentUser.premium_expired_at && !isOwner(currentUser.email)
+    ? new Date(currentUser.premium_expired_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})
+    : (isOwner(currentUser.email) ? 'Permanen ♾️' : '-');
+  const txnHistory = getTransactionHistory(currentUser.email);
+
+  document.getElementById('dashboardContent').innerHTML = `
+    <div class="dash-header">
+      <div class="dash-avatar ${premium ? 'premium' : ''}" style="background:${getAvatarColor(currentUser.email)}">${getInitials(currentUser.name)}</div>
+      <div>
+        <div class="dash-name">${currentUser.name}</div>
+        <div class="dash-email">${currentUser.email}</div>
+        <span class="badge-pill ${premium ? 'badge-premium' : 'badge-free'}" style="margin-top:6px;display:inline-flex;">${premium ? '👑 PREMIUM' : 'FREE'}</span>
+      </div>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card-label">Status Akun</div>
+        <div class="dash-card-value ${premium ? 'gold' : ''}">${premium ? '👑 Premium' : '🆓 Free'}</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-label">Sisa Generate Hari Ini</div>
+        <div class="dash-card-value ${premium ? 'gold' : left <= 1 ? 'accent' : 'green'}">${premium ? '∞' : left + ' / ' + FREE_DAILY_LIMIT}</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-label">Bergabung Sejak</div>
+        <div style="font-size:15px;font-weight:600;margin-top:4px;">${joinDate}</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-label">Premium Aktif Hingga</div>
+        <div style="font-size:15px;font-weight:600;margin-top:4px;">${premium ? expiry : '-'}</div>
+      </div>
+    </div>
+    ${currentUser.transaction_id ? `<div class="dash-card" style="margin-bottom:14px;">
+      <div class="dash-card-label">Transaction ID Terakhir</div>
+      <div style="font-size:12px;font-family:monospace;color:var(--text2);margin-top:4px;word-break:break-all;">${currentUser.transaction_id}</div>
+      <div style="font-size:11px;color:var(--green);margin-top:4px;">✅ Verified — ${currentUser.payment_status || 'settlement'}</div>
+    </div>` : ''}
+    ${isOwner(currentUser.email) ? `<div style="background:linear-gradient(135deg,var(--gold-bg),var(--accent-bg));border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--text2);">⚡ <strong style="color:var(--text)">Owner Account</strong> — Unlimited access permanen.</div>` : ''}
+    <div class="dash-divider"></div>
+    <div class="dash-btn-row">
+      ${!premium ? `<button class="btn-upgrade-dash" onclick="closeModal('dashboardModal');openPayment('Pro',79000,'Rp 79.000')">👑 Upgrade Premium</button>` : ''}
+      <button class="btn-danger" onclick="doLogout()">🚪 Logout</button>
+    </div>`;
+  openModal('dashboardModal');
+}
+
+function getTransactionHistory(email) {
+  const db = getTxnDB();
+  return Object.values(db).filter(t => t.user_email === email);
+}
+
+// ===== MODAL HELPERS =====
+function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow=''; }
+function switchModal(from, to) { closeModal(from); setTimeout(() => openModal(to), 150); }
+
+document.querySelectorAll('.overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+});
+
+// ===== HERO CTA =====
+function handleHeroCTA() {
+  if (currentUser) { document.getElementById('generator').scrollIntoView({behavior:'smooth'}); }
+  else { openModal('registerModal'); }
+}
+function scrollToGenerator() { document.getElementById('generator').scrollIntoView({behavior:'smooth'}); }
+
+// ===== THEME =====
+const html = document.documentElement;
+let dark = html.dataset.theme === 'dark';
+document.getElementById('themeBtn').textContent = dark ? '☀️' : '🌙';
+document.getElementById('themeBtn').onclick = () => {
+  dark = !dark;
+  html.dataset.theme = dark ? 'dark' : 'light';
+  document.getElementById('themeBtn').textContent = dark ? '☀️' : '🌙';
+};
+
+// ===== HAMBURGER =====
+document.getElementById('hamburger').onclick = () => { document.getElementById('navLinks').classList.toggle('open'); };
+
+// ===== PLATFORM/STYLE CHIPS =====
+document.getElementById('platformSelect').addEventListener('click', e => {
+  const chip = e.target.closest('.platform-chip');
+  if (!chip) return;
+  document.querySelectorAll('.platform-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+});
+
+document.getElementById('styleGrid').addEventListener('click', e => {
+  const chip = e.target.closest('.style-chip');
+  if (!chip || chip.classList.contains('locked')) return;
+  document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+});
+
+// ===== FAQ =====
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ===== SCROLL OBSERVER =====
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ===== CAPTION TEMPLATES =====
+const templates = {
+  'Soft Selling': (p,n,t,prm,plt) => `✨ Halo ${t || 'kamu yang cantik/ganteng'}~\n\nBoleh kenalan dulu sama ${n}? 🥰\n\nProduk ini beneran jadi favorit banyak orang, dan sekarang giliran kamu ngerasain manfaatnya juga!\n\n${prm ? `🎁 Ada yang spesial loh: ${prm}\n\n` : ''}Kenapa banyak yang suka?\n✅ Kualitas premium, harga bersahabat\n✅ Terbukti bikin puas\n✅ Pengiriman cepat & aman\n\nYuk, coba dulu~ Kalau suka, boleh tinggalkan review ya! 💕\n\n💌 DM atau klik tombol beli langsung di toko ya!\n\n${getHashtags(n, plt)}`,
+  'Hard Selling': (p,n,t,prm,plt) => `🔥 STOP SCROLLING! Ini yang kamu cari!\n\n${n.toUpperCase()} — READY STOCK SEKARANG!\n\n${prm ? `⚡ PROMO TERBATAS: ${prm}` : '⚡ STOK TERBATAS, JANGAN SAMPAI KEHABISAN!'}\n\n💥 KENAPA HARUS BELI SEKARANG?\n→ Kualitas 100% TERJAMIN\n→ Harga PALING MURAH di pasaran\n→ Pengiriman SUPER CEPAT\n→ Garansi KEPUASAN PENUH\n\n⏰ JANGAN TUNGGU LAGI! Ribuan pelanggan sudah puas!\n\n👇 KLIK BELI SEKARANG sebelum kehabisan!\n\n${getHashtags(n, plt)}`,
+  'FOMO': (p,n,t,prm,plt) => `⏰ PERINGATAN: Stok hampir HABIS!\n\nUdah 847 orang beli ${n} dalam 24 jam terakhir... dan kamu belum?! 😱\n\n${prm ? `🚨 FLASH SALE: ${prm} — HARI INI DOANG!` : '🚨 Promo ini BERAKHIR tengah malam!'}\n\nYang sudah beli pada bilang apa?\n💬 "Nyesel ga beli dari dulu!"\n💬 "Worth it banget, langsung repeat order"\n💬 "Kualitasnya melebihi ekspektasi!"\n\n⚠️ Sisa stok tinggal sedikit.\n\n👆 Tap langsung untuk order sekarang.\n\n${getHashtags(n, plt)}`,
+  'Gen Z': (p,n,t,prm,plt) => `bestie denger-denger dulu 😭✋\n\n${n} ini literally game changer parah sumpah 🔥\n\naku udah nyoba dan beneran no cap ini bagus banget, vibes-nya dapet, hasilnya juga real 💅\n\n${prm ? `btw ada promo: ${prm} — manifesting kalian langsung gas 🙏` : 'harga juga masuk akal, ga bakal nyesel deh 🫶'}\n\nyg mau upgrade diri:\n✨ kualitas premium\n✨ anti zonk\n✨ temen-temenku udah pada pake loh\n\nlink di bio ya or langsung dm 🫵\n\n${getHashtags(n, plt)}`,
+  'Affiliate': (p,n,t,prm,plt) => `💸 Hai teman-teman! Hari ini aku mau share produk yang udah aku rekomendasiin ke keluargaku sendiri!\n\nIni dia ${n} yang lagi hype banget!\n\nJujur aku udah riset lama sebelum rekomendasiin ini, dan kualitasnya beneran ga mengecewakan!\n\n${prm ? `🎉 Kabar baik! Sekarang ada: ${prm}` : '💡 Harga reguler udah sangat worth it!'}\n\nKeunggulannya:\n⭐ Kualitas terjamin\n⭐ Support seller lokal\n⭐ Responsif dan terpercaya\n\nUntuk order, langsung klik link di bawah ya! 😊\n\n${getHashtags(n, plt)}`,
+  'Elegan': (p,n,t,prm,plt) => `Untuk mereka yang menghargai kualitas terbaik.\n\nPerkenalkan — ${n}.\n\nBukan sekadar produk biasa. Ini adalah perpaduan sempurna antara fungsi dan estetika yang dirancang untuk memenuhi standar tertinggi.\n\n${prm ? `Nikmati keistimewaan eksklusif: ${prm}` : 'Setiap detail diperhatikan dengan seksama untuk memberikan pengalaman terbaik bagi Anda.'}\n\nBergabunglah dengan mereka yang memilih yang terbaik.\n\n🛒 Pesan sekarang dan rasakan perbedaannya.\n\n${getHashtags(n, plt)}`,
+  'Lucu': (p,n,t,prm,plt) => `POV: Dompetmu bilang "jangan" tapi hatimu bilang "harus beli!" 😭💸\n\nIya, aku ngerti perasaanmu... tapi gimana kalau aku bilang ${n} ini WORTH EVERY PENNY?!\n\n${prm ? `Dan sekarang ada ${prm} — alam semesta literally mendukungmu beli ini! 🌟` : 'Harganya juga ga bikin dompet nangis-nangis amat kok! 😅'}\n\nKata mereka yang udah beli:\n😍 "Astaga kenapa ga dari dulu beli ini"\n🤯 "Ini sihir apa??"\n🥺 "Makasih ya, hidup gue berubah"\n\nJadi tunggu apa lagi bestie? Klik beli sebelum kamu nyesel!\n\n${getHashtags(n, plt)}`
+};
+
+function getHashtags(nama, platform) {
+  const base = ['#jualanonline','#seller','#produklokal','#rekomendasiproduk','#shopnow'];
+  const plat = {
+    'TikTok Shop': ['#tiktokshop','#tiktokviral','#fyp','#foryoupage','#tiktokindonesia'],
+    'Shopee': ['#shopee','#shopeeindonesia','#shopeehaul','#shoppee','#belanjashopee'],
+    'Instagram': ['#instagram','#instashop','#igshop','#instagramable','#igpost'],
+    'Tokopedia': ['#tokopedia','#belanjatokopedia','#tokopediasale'],
+    'Lazada': ['#lazada','#lazadaindonesia','#lazadasale']
+  };
+  return [...base, ...(plat[platform] || plat['TikTok Shop'])].join(' ');
+}
+
+// ===== GENERATE CAPTION =====
+function generateCaption() {
+  if (!currentUser) { showToast('⚠️ Login dulu untuk generate caption!','error'); openModal('loginModal'); return; }
+  const produk = document.getElementById('produkName').value.trim();
+  if (!produk) { showToast('⚠️ Isi nama produk terlebih dahulu!','error'); return; }
+  if (!isPremium(currentUser)) {
+    const left = getGeneratesLeft(currentUser);
+    if (left <= 0) { showToast('⚠️ Limit harian habis! Upgrade Premium untuk unlimited.','error'); openPayment('Pro',79000,'Rp 79.000'); return; }
+  }
+  const styleChip = document.querySelector('.style-chip.active');
+  if (!styleChip || styleChip.classList.contains('locked')) { showToast('🔒 Pilih gaya caption yang tersedia.','error'); return; }
+  const platform = document.querySelector('.platform-chip.active')?.dataset.val || 'TikTok Shop';
+  const target = document.getElementById('targetMarket').value;
+  const promo = document.getElementById('promo').value.trim();
+  const style = styleChip?.dataset.style || 'Soft Selling';
+  document.getElementById('resultPlaceholder').style.display = 'none';
+  document.getElementById('resultContent').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'flex';
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  document.getElementById('btnText').textContent = 'Generating...';
+  const loadingMsgs = ['AI sedang menulis caption terbaik...','Menyusun kata-kata yang menarik...','Menambahkan emoji dan hashtag...','Hampir selesai!'];
+  let msgIdx = 0;
+  const msgInterval = setInterval(() => { msgIdx=(msgIdx+1)%loadingMsgs.length; document.getElementById('loadingText').textContent=loadingMsgs[msgIdx]; }, 800);
+  const delay = 1800 + Math.random() * 1000;
+  setTimeout(() => {
+    clearInterval(msgInterval);
+    const fn = templates[style] || templates['Soft Selling'];
+    const caption = fn(platform, produk, target, promo, platform);
+    if (!isPremium(currentUser)) { currentUser = incrementUsage(currentUser); renderLimitBar(); }
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('resultContent').style.display = 'flex';
+    document.getElementById('resultPlatformLabel').textContent = `✨ Caption ${style} — ${platform}`;
+    const el = document.getElementById('resultText');
+    el.textContent = '';
+    let i = 0;
+    const speed = Math.max(8, 2500/caption.length);
+    const typeInterval = setInterval(() => {
+      if (i < caption.length) { el.textContent += caption[i]; i++; }
+      else {
+        clearInterval(typeInterval);
+        btn.disabled = false;
+        document.getElementById('btnText').textContent = 'Generate Ulang';
+        document.getElementById('btnIcon').textContent = '✨';
+        const left = getGeneratesLeft(currentUser);
+        if (!isPremium(currentUser) && left <= 1) showToast(`⚠️ Sisa ${left} generate hari ini. Upgrade untuk unlimited!`,'info');
+      }
+    }, speed > 20 ? 12 : speed);
+    btn.disabled = false;
+    document.getElementById('btnText').textContent = 'Generate Ulang';
+  }, delay);
+}
+
+// ===== COPY =====
+function copyCaption() {
+  const text = document.getElementById('resultText').textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.classList.add('copied'); btn.textContent = '✅ Tersalin!';
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '📋 Copy'; }, 2000);
+    showToast('📋 Caption berhasil disalin!','success');
+  });
+}
+
+// ===== TOAST =====
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' ' + type : '');
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ===== SMOOTH SCROLL =====
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); document.getElementById('navLinks').classList.remove('open'); }
+  });
+});
+
+// ===== KEYBOARD ESC =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.overlay.active').forEach(o => closeModal(o.id));
+});
+
+// ===== INIT =====
+renderNavUser(); renderLimitBar(); renderStyleChips(); renderUpgradeCTA();
+
+// Cek pending transaction saat halaman load
+const pendingTxn = getPendingTxn();
+if (pendingTxn && currentUser) {
+  const txn = getTransaction(pendingTxn.txn_id);
+  if (txn && txn.payment_status === 'pending') {
+    setTimeout(() => {
+      showToast('⏳ Ada pembayaran yang belum selesai. Cek status di profil kamu.', 'info');
+    }, 2000);
+  }
+}
+</script>
+</body>
+</html>
